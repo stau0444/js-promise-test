@@ -1,40 +1,37 @@
-function a(number){
-    return new Promise((resolve ,reject)=>{
-        if(number > 4 ){
-            //reject();가 실행되면 resolve는 실행되지 않는다.
-            reject();
-            return 
+
+//영화의 정보가 가져와지는 기능이 실행된다고 직관적으로 알수있게
+//함수로 만들어 사용하는 것이 좋다
+//함수에서 사용되는 자원을 외부에 노출하지 않을 수 있다.
+//함수를 재활용할 수 있다.
+
+function fetchMovies(title){
+    const OMDB_API_KEY = '7035c60c'
+    return new Promise(async(resolve,reject)=>{
+        try{
+            const res = await axios.get(`https://omdbapi.com?apikey=${OMDB_API_KEY}&s=${title}`)
+            resolve(res);
+        }catch(error){
+            console.log(error)
+            reject('erororo')
         }
-        setTimeout(()=>{
-            console.log('a1');
-            console.log('resolve')
-            resolve();
-        },1000)
     })
 }
 
-function PromiseTest(){
-    a(7)
-    //함수가 resolve 됬을때 실행
-    .then(()=>{console.log('resolve')})
-    ////함수가 reject 됬을때 실행
-    .catch(()=>{console.log('reject')})
-    //resolve 든 reject 든 출력된다.
-    .finally(()=>{console.log('finally')})
-}
-
-async function asyncAwaitTest(){
-    //async await 에서는 try catch 문으로 
-    //예외를 잡는다.
+async function test(){
     try{
-        await a(1);
-        await a(10);
+        const res = await fetchMovies('frozen')
+        console.log(res)
     }catch(error){
-        console.log('reject')
-    }finally{
-        console.log('done')
-    }
+        console.log(error);
+    }       
 }
 
+function MethodTest(){
+    fetchMovies('time')
+    .then((resp)=>{console.log(resp)})
+    .catch((error)=>{console.log(error)})
+}
 
-asyncAwaitTest();
+test();
+MethodTest();
+
